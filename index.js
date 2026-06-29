@@ -6,8 +6,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // Health check
 app.get('/', (req, res) => {
   res.json({ status: 'CBF Backend is running' });
@@ -17,6 +15,7 @@ app.get('/', (req, res) => {
 app.post('/send-otp', async (req, res) => {
   const { email, otp } = req.body;
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: email,
