@@ -12,6 +12,8 @@ mongoose.set('strictQuery', true);
 
 mongoose.connect(process.env.MONGODB_URI, {
   serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000,
+  family: 4,
 })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err.message));
@@ -97,4 +99,3 @@ app.post('/auth/login', async (req, res) => {
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log('Server running on port ' + PORT));
-
