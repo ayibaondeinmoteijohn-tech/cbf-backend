@@ -1,4 +1,4 @@
-const express = require('express');
+hereconst express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -7,20 +7,6 @@ const { Resend } = require('resend');
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-mongoose.set('strictQuery', true);
-
-mongoose.connect(process.env.MONGODB_URI, {
-  serverSelectionTimeoutMS: 30000,
-  socketTimeoutMS: 45000,
-  family: 4,
-})
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err.message));
-
-mongoose.connection.on('connected', () => console.log('Mongoose event: connected'));
-mongoose.connection.on('error', (err) => console.error('Mongoose event error:', err.message));
-mongoose.connection.on('disconnected', () => console.log('Mongoose event: disconnected'));
 
 const userSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
@@ -98,4 +84,13 @@ app.post('/auth/login', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log('Server running on port ' + PORT));
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('MongoDB connected');
+    app.listen(PORT, () => console.log('Server running on port ' + PORT));
+  })
+  .catch(err => {
+    console.error('MongoDB connection failed:', err.message);
+    process.exit(1);
+  });
