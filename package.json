@@ -14,7 +14,7 @@
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "mongoose": "^9.7.3",
+    "mongoose": "^8.9.5",
     "resend": "^6.16.0"
   }
 }
