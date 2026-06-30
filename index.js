@@ -1,4 +1,3 @@
-cat > ~/cbf-backend/index.js << 'ENDOFFILE'
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
