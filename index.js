@@ -1,8 +1,7 @@
-const express = require('express');
+hereconst express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { Resend } = require('resend');
 
 const app = express();
 app.use(cors());
@@ -24,13 +23,24 @@ app.get('/', (req, res) => {
 app.post('/send-otp', async (req, res) => {
   const { email, otp } = req.body;
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: email,
-      subject: 'Your Cory Booker Fund OTP',
-      html: '<h2>Your OTP is: <strong>' + otp + '</strong></h2><p>Valid for 10 minutes.</p>'
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        sender: { name: 'Cory Booker Fund', email: process.env.BREVO_SENDER_EMAIL },
+        to: [{ email: email }],
+        subject: 'Your Cory Booker Fund OTP',
+        htmlContent: '<h2>Your OTP is: <strong>' + otp + '</strong></h2><p>Valid for 10 minutes.</p>'
+      })
     });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(errText);
+    }
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
